@@ -14,12 +14,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.christmasboy_.todo.member.entity.MemberInfoEntity;
+import com.christmasboy_.todo.todoList.entity.TodoImageEntity;
 import com.christmasboy_.todo.todoList.entity.TodoInfoEntity;
+import com.christmasboy_.todo.todoList.repository.TodoImageRepository;
 import com.christmasboy_.todo.todoList.repository.TodoInfoRepository;
 
 @Service
 public class TodoInfoService {
     @Autowired TodoInfoRepository tRepo;
+    @Autowired TodoImageRepository tiRepo;
+    public Map<String, Object> addTodoImage(TodoImageEntity data, Long tiSeq) {
+        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        data.setTiSeq(tiSeq);
+        tiRepo.save(data);
+        resultMap.put("status", true);
+        resultMap.put("message", "이미지가 저장되었습니다. ");
+        return resultMap;
+    }
+    public String getFilenameByUri(String uri) {
+        List<TodoImageEntity> data = tiRepo.findTop1ByUriOrderBySeqDesc(uri);
+        return data.get(0).getFileName();
+    }
+
+
     public Map<String, Object> addTodoInfo(TodoInfoEntity data, HttpSession session) {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
         MemberInfoEntity loginUser = (MemberInfoEntity)session.getAttribute("loginUser");
